@@ -69,5 +69,6 @@ ENV  \
 
 COPY --from=builder /app/node_modules /app/node_modules
 COPY . /app
+RUN pnpm i --frozen-lockfile --dev
 
 CMD ["pnpm", "dev", "--host", "0.0.0.0", "--port", "3000"]

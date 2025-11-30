@@ -1,9 +1,32 @@
+schema {
+  query: Query
+}
+
 type Query {
   viewer: User
+  mineSweeper: MineSweeper!
 }
 
 type User {
   id: ID!
   name: String!
   email: String!
+}
+
+type MineSweeper {
+  board: Board!
+}
+
+type Board {
+  blocks: [Block!]!
+}
+
+type Block {
+  coordinates: Coordinates!
+  isBomb: Boolean!
+}
+
+type Coordinates {
+  x: Int!
+  y: Int!
 }

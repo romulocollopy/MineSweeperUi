@@ -1,10 +1,5 @@
-import UserProfile from '../components/UserProfile';
+import MineSweeper from '../components/MineSweeper';
 
 export function HomePage() {
-  return (
-    <div>
-      Home
-      <UserProfile></UserProfile>
-    </div>
-  );
+  return <MineSweeper />;
 }
