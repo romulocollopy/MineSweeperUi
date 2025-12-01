@@ -12,7 +12,7 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/:gameId" element={<MineSweeper />} />
+            <Route path="/:gameSlug" element={<MineSweeper />} />
           </Routes>
         </div>
       </BrowserRouter>

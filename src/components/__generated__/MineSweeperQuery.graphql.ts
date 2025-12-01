@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ef4c26473c31c42d763dfbeeb66284a9>>
+ * @generated SignedSource<<f7dd68c5b73bf1a2e920780f49291dad>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,7 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type MineSweeperQuery$variables = {
-  id: string;
+  slug: string;
 };
 export type MineSweeperQuery$data = {
   readonly mineSweeper: {
@@ -21,7 +21,7 @@ export type MineSweeperQuery$data = {
       };
       readonly display: string;
     }>;
-    readonly id: string;
+    readonly slug: string;
   };
 };
 export type MineSweeperQuery = {
@@ -34,7 +34,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id"
+    "name": "slug"
   }
 ],
 v1 = [
@@ -43,8 +43,8 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "id",
-        "variableName": "id"
+        "name": "slug",
+        "variableName": "slug"
       }
     ],
     "concreteType": "MineSweeper",
@@ -56,7 +56,7 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "id",
+        "name": "slug",
         "storageKey": null
       },
       {
@@ -124,16 +124,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "a16587ccacec35957138f80743ff520e",
+    "cacheID": "f22a64c8f53ec915934cfdf0d5077ceb",
     "id": null,
     "metadata": {},
     "name": "MineSweeperQuery",
     "operationKind": "query",
-    "text": "query MineSweeperQuery(\n  $id: ID!\n) {\n  mineSweeper(id: $id) {\n    id\n    blocks {\n      coordinates {\n        x\n        y\n      }\n      display\n    }\n  }\n}\n"
+    "text": "query MineSweeperQuery(\n  $slug: String!\n) {\n  mineSweeper(slug: $slug) {\n    slug\n    blocks {\n      coordinates {\n        x\n        y\n      }\n      display\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "85c61a2ac231472596f340dee70241ea";
+(node as any).hash = "27b1a5db5f88c462b79963e9da0d5de6";
 
 export default node;

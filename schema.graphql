@@ -4,7 +4,7 @@ schema {
 
 type Query {
   viewer: User
-  mineSweeper(id: ID!): MineSweeper!
+  mineSweeper(slug: String!): MineSweeper!
 }
 
 type User {
@@ -14,7 +14,7 @@ type User {
 }
 
 type MineSweeper {
-  id: ID!
+  slug: String!
   blocks: [Block!]!
 }
 

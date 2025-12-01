@@ -11,9 +11,9 @@ const MineSweeper = () => {
   const params = useParams();
   const resp = useLazyLoadQuery<MineSweeperQuery>(
     graphql`
-      query MineSweeperQuery($id: ID!) {
-        mineSweeper(id: $id) {
-          id
+      query MineSweeperQuery($slug: String!) {
+        mineSweeper(slug: $slug) {
+          slug
           blocks {
             coordinates {
               x
@@ -24,7 +24,7 @@ const MineSweeper = () => {
         }
       }
     `,
-    { id: params.gameId }
+    { slug: params.gameSlug }
   );
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const MineSweeper = () => {
   return (
     <div>
       <h1>Mine Sweeper</h1>
-      <h2>Welcome to the game {params.gameId}</h2>
+      <h2>Welcome to the game {params.gameSlug}</h2>
       {!running && <div>Game Over</div>}
       <MineSweeperBoard
         board={board}
