@@ -1,7 +1,7 @@
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import type { MineSweeperQuery } from './__generated__/MineSweeperQuery.graphql';
 import { type MineBlockDto } from '../types';
-import { MineBlock } from '../domain';
+import { Board, MineBlock } from '../domain';
 import { generateBoard } from '../domain.test';
 
 const MineSweeper = () => {
@@ -27,15 +27,15 @@ const MineSweeper = () => {
       {}
     );
   } catch {
-    board = generateBoard(16, 16, 40);
+    board = { blocks: generateBoard(16, 16, 40) };
   }
 
-  board = data ? data.mineSweeper.board : board;
+  board = data ? Board.fromDto(data.mineSweeper) : Board.fromDto(board);
 
   return (
     <div>
       <h1>Mine Sweeper</h1>
-      <MineSweeperBoard blocks={board} width={16} height={16}></MineSweeperBoard>
+      <MineSweeperBoard board={board} width={16} height={16}></MineSweeperBoard>
     </div>
   );
 };
@@ -43,18 +43,17 @@ const MineSweeper = () => {
 export default MineSweeper;
 
 interface MineSweeperProps {
-  blocks: MineBlockDto[];
+  board: Board;
   width: number;
   height: number;
 }
 
-export function MineSweeperBoard({ blocks, width, height }: MineSweeperProps) {
-  // Convert flat list into a matrix: rows = x, columns = y
+export function MineSweeperBoard({ board, width, height }: MineSweeperProps) {
   const grid: MineBlock[][] = Array.from({ length: width }, () => Array.from({ length: height }));
 
-  for (const block of blocks) {
+  for (const block of board.blocks) {
     const { x, y } = block.coordinates;
-    grid[x][y] = new MineBlock({ x, y }, block.isBomb);
+    grid[x][y] = new MineBlock(block);
   }
 
   return (
@@ -74,7 +73,7 @@ export function MineSweeperBoard({ blocks, width, height }: MineSweeperProps) {
                   fontFamily: 'monospace',
                 }}
               >
-                {block?.isBomb ? '💣' : block.bombsAround()}
+                {block?.isBomb ? '💣' : block.bombsAround(board)}
               </td>
             ))}
           </tr>
