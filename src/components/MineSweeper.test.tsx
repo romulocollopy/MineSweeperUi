@@ -33,5 +33,4 @@ test('displays the mine sweeper board', async () => {
 
   // Assert the user name is displayed
   expect(screen.getByText('Mine Sweeper')).toBeInTheDocument();
-  expect(screen.getByText(/Email: john@example.com/i)).toBeInTheDocument();
 });

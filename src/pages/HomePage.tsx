@@ -1,5 +1,5 @@
 import MineSweeper from '../components/MineSweeper';
 
 export function HomePage() {
-  return <MineSweeper />;
+  return <h1>Hello</h1>;
 }

@@ -4,7 +4,7 @@ schema {
 
 type Query {
   viewer: User
-  mineSweeper: MineSweeper!
+  mineSweeper(id: ID!): MineSweeper!
 }
 
 type User {
@@ -14,16 +14,13 @@ type User {
 }
 
 type MineSweeper {
-  board: Board!
-}
-
-type Board {
+  id: ID!
   blocks: [Block!]!
 }
 
 type Block {
   coordinates: Coordinates!
-  isBomb: Boolean!
+  display: String!
 }
 
 type Coordinates {

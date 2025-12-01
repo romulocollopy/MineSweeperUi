@@ -1,46 +1,25 @@
 import type { Coordinates, MineBlockDto } from './types';
 
+export class Boom extends Error {
+  board: Board;
+  constructor(message: string, newBoard: Board) {
+    super(message);
+    this.board = newBoard;
+  }
+}
+
 export class MineBlock {
   coordinates: Coordinates;
   isBomb: boolean;
+  display: string;
 
-  constructor({ coordinates, isBomb }: { coordinates: Coordinates; isBomb: boolean }) {
-    this.isBomb = isBomb;
+  constructor({ coordinates, display }: { coordinates: Coordinates; display?: string }) {
+    this.display = display || '';
     this.coordinates = coordinates;
   }
 
-  getNeighbors(board: Board): MineBlock[] {
-    const { x, y } = this.coordinates;
-
-    // The 8 possible neighbor offsets
-    const deltas = [
-      [-1, -1],
-      [-1, 0],
-      [-1, 1],
-      [0, -1],
-      [0, 1],
-      [1, -1],
-      [1, 0],
-      [1, 1],
-    ];
-
-    const result: MineBlock[] = [];
-
-    for (const [dx, dy] of deltas) {
-      const nx = x + dx;
-      const ny = y + dy;
-
-      const n = board.get(nx, ny);
-      if (n) {
-        result.push(n);
-      }
-    }
-
-    return result;
-  }
-
-  bombsAround(board: Board): number {
-    return [...this.getNeighbors(board).filter((b) => b.isBomb)].length;
+  dig(board: Board) {
+    console.log('dig!');
   }
 }
 

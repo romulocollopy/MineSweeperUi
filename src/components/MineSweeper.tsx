@@ -1,60 +1,78 @@
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import type { MineSweeperQuery } from './__generated__/MineSweeperQuery.graphql';
-import { type MineBlockDto } from '../types';
-import { Board, MineBlock } from '../domain';
-import { generateBoard } from '../domain.test';
+import { Board, Boom, MineBlock } from '../domain';
+import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import { useParams } from 'react-router-dom';
 
 const MineSweeper = () => {
-  let board;
-  let data;
-  try {
-    data = useLazyLoadQuery<MineSweeperQuery>(
-      graphql`
-        query MineSweeperQuery {
-          mineSweeper {
-            board {
-              blocks {
-                coordinates {
-                  x
-                  y
-                }
-                isBomb
-              }
+  const [running, setRunning] = useState(true);
+  const [board, setBoard] = useState<Board>(new Board({ blocks: [] }));
+
+  const params = useParams();
+  const resp = useLazyLoadQuery<MineSweeperQuery>(
+    graphql`
+      query MineSweeperQuery($id: ID!) {
+        mineSweeper(id: $id) {
+          id
+          blocks {
+            coordinates {
+              x
+              y
             }
+            display
           }
         }
-      `,
-      {}
-    );
-  } catch {
-    board = { blocks: generateBoard(16, 16, 40) };
-  }
+      }
+    `,
+    { id: params.gameId }
+  );
 
-  board = data ? Board.fromDto(data.mineSweeper) : Board.fromDto(board);
+  useEffect(() => {
+    setBoard(resp.mineSweeper);
+  }, []);
 
   return (
     <div>
       <h1>Mine Sweeper</h1>
-      <MineSweeperBoard board={board} width={16} height={16}></MineSweeperBoard>
+      <h2>Welcome to the game {params.gameId}</h2>
+      {!running && <div>Game Over</div>}
+      <MineSweeperBoard
+        board={board}
+        setBoard={setBoard}
+        setRunning={setRunning}
+      ></MineSweeperBoard>
     </div>
   );
 };
 
-export default MineSweeper;
-
 interface MineSweeperProps {
   board: Board;
-  width: number;
-  height: number;
+  setBoard: Dispatch<SetStateAction<Board>>;
+  setRunning: (isRunning: boolean) => void;
 }
 
-export function MineSweeperBoard({ board, width, height }: MineSweeperProps) {
-  const grid: MineBlock[][] = Array.from({ length: width }, () => Array.from({ length: height }));
+export function MineSweeperBoard({ board, setRunning, setBoard }: MineSweeperProps) {
+  const [grid, setGrid] = useState([]);
 
-  for (const block of board.blocks) {
-    const { x, y } = block.coordinates;
-    grid[x][y] = new MineBlock(block);
-  }
+  useEffect(() => {
+    const newGrid = [...gridFromBoard(board)];
+    setGrid(newGrid);
+  }, [board]);
+
+  const click = (block: MineBlock) => {
+    let newBoard;
+    try {
+      newBoard = block.dig(board);
+    } catch (err) {
+      if (err instanceof Boom) {
+        setRunning(false);
+        newBoard = err.board;
+      }
+    }
+    if (newBoard) {
+      setBoard(newBoard);
+    }
+  };
 
   return (
     <table style={{ borderCollapse: 'collapse' }}>
@@ -63,7 +81,7 @@ export function MineSweeperBoard({ board, width, height }: MineSweeperProps) {
           <tr key={rowIndex}>
             {row.map((block, colIndex) => (
               <td
-                key={colIndex}
+                key={`${rowIndex}${colIndex}`}
                 style={{
                   border: '1px solid #ccc',
                   padding: '4px',
@@ -72,8 +90,11 @@ export function MineSweeperBoard({ board, width, height }: MineSweeperProps) {
                   height: '20px',
                   fontFamily: 'monospace',
                 }}
+                onClick={() => {
+                  click(block);
+                }}
               >
-                {block?.isBomb ? '💣' : block.bombsAround(board)}
+                {block.display}
               </td>
             ))}
           </tr>
@@ -81,4 +102,18 @@ export function MineSweeperBoard({ board, width, height }: MineSweeperProps) {
       </tbody>
     </table>
   );
+}
+
+export default MineSweeper;
+
+function gridFromBoard(board: Board) {
+  const width = Math.max(...board.blocks.map((b) => b.coordinates.x + 1));
+  const height = Math.max(...board.blocks.map((b) => b.coordinates.y + 1));
+  const grid: MineBlock[][] = Array.from({ length: width }, () => Array.from({ length: height }));
+
+  for (const block of board.blocks) {
+    const { x, y } = block.coordinates;
+    grid[x][y] = block;
+  }
+  return grid;
 }

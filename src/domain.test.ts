@@ -1,7 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import type { MineBlockDto } from './types';
-import { generateBoard } from './components/MineSweeper';
-import { Board, MineBlock } from './domain';
+import { Board } from './domain';
 
 describe('Domain tests', () => {
   const boardDto = {
@@ -20,6 +19,8 @@ describe('Domain tests', () => {
     ],
   };
 
+  const board = Board.fromDto(boardDto);
+
   // [
   //   [0, 1, 0],
   //   [1, 0, 0],
@@ -27,40 +28,17 @@ describe('Domain tests', () => {
   // ];
 
   test('Instantiates', () => {
-    const board = Board.fromDto(boardDto);
     expect(board.blocks.length).to.equal(9);
   });
 
-  test('get Neighbors', () => {
-    const board = Board.fromDto(boardDto);
-
-    const middleBlock = board.get(1, 1);
-    expect(middleBlock?.getNeighbors(board).length).to.equal(8);
-
-    const topLeft = board.get(0, 2);
-    expect(topLeft?.getNeighbors(board).length).to.equal(3);
+  test('get block from board', () => {
+    const block = board.get(2, 0);
+    block?.dig(board);
   });
 
-  test('calculates bombsAround', () => {
-    const board = Board.fromDto(boardDto);
-
-    const middleBlock = board.get(1, 1);
-    expect(middleBlock?.bombsAround(board)).to.equal(3);
-
-    const topLeft = board.get(0, 2);
-    expect(topLeft?.bombsAround(board)).to.equal(2);
-
-    const topRight = board.get(2, 2);
-    expect(topRight?.bombsAround(board)).to.equal(1);
-
-    const bottomLeft = board.get(0, 0);
-    expect(bottomLeft?.bombsAround(board)).to.equal(1);
-
-    const bottomMiddle = board.get(1, 0);
-    expect(bottomMiddle?.bombsAround(board)).to.equal(2);
-
-    const bottomRight = board.get(2, 0);
-    expect(bottomRight?.bombsAround(board)).to.equal(0);
+  test('dig', () => {
+    const block = board.get(2, 0);
+    block?.dig(board);
   });
 });
 

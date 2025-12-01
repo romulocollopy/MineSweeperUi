@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import { environment } from './lib/relay-environment';
 import { HomePage } from './pages/HomePage';
+import MineSweeper from './components/MineSweeper';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/:gameId" element={<MineSweeper />} />
           </Routes>
         </div>
       </BrowserRouter>
