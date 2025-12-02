@@ -1,13 +1,15 @@
+import { useEffect, useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import type { MineSweeperQuery } from './__generated__/MineSweeperQuery.graphql';
-import { Board, Boom, MineBlock } from '../domain';
-import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import { useParams } from 'react-router-dom';
+
+import { Board, MineBlock } from '../domain';
+import type { MineSweeperQuery } from './__generated__/MineSweeperQuery.graphql';
+import { useDigBlock } from './mutations';
 
 const MineSweeper = () => {
   const [running, setRunning] = useState(true);
   const [board, setBoard] = useState<Board>(new Board({ blocks: [] }));
-
+  const { dig } = useDigBlock();
   const params = useParams();
   const resp = useLazyLoadQuery<MineSweeperQuery>(
     graphql`
@@ -26,8 +28,15 @@ const MineSweeper = () => {
         }
       }
     `,
-    { slug: params.gameSlug }
+    { slug: params.gameSlug || 'Our Game' }
   );
+
+  const click = (block: MineBlock) => {
+    dig(board.slug, block.coordinates, (newBoard, gameOver) => {
+      setBoard(newBoard);
+      if (gameOver) setRunning(false);
+    });
+  };
 
   useEffect(() => {
     setBoard(resp.mineSweeper);
@@ -42,6 +51,7 @@ const MineSweeper = () => {
         board={board}
         setBoard={setBoard}
         setRunning={setRunning}
+        click={click}
       ></MineSweeperBoard>
     </div>
   );
@@ -49,32 +59,16 @@ const MineSweeper = () => {
 
 interface MineSweeperProps {
   board: Board;
-  setBoard: Dispatch<SetStateAction<Board>>;
-  setRunning: (isRunning: boolean) => void;
+  click: null;
 }
 
-export function MineSweeperBoard({ board, setRunning, setBoard }: MineSweeperProps) {
+export function MineSweeperBoard({ board, click }: MineSweeperProps) {
   const [grid, setGrid] = useState([]);
 
   useEffect(() => {
     const newGrid = [...gridFromBoard(board)];
     setGrid(newGrid);
   }, [board]);
-
-  const click = (block: MineBlock) => {
-    let newBoard;
-    try {
-      newBoard = block.dig(board);
-    } catch (err) {
-      if (err instanceof Boom) {
-        setRunning(false);
-        newBoard = err.board;
-      }
-    }
-    if (newBoard) {
-      setBoard(newBoard);
-    }
-  };
 
   return (
     <table style={{ borderCollapse: 'collapse' }}>
