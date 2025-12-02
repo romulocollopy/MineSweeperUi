@@ -1,50 +1,28 @@
 import { useEffect, useState } from 'react';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { useParams } from 'react-router-dom';
-
 import { generateSlug } from 'random-word-slugs';
 
-import { useMutation } from 'react-relay';
-import { Board } from '../domain';
+import { Board, MineBlock } from '../domain';
 
-import { MineBlock } from '../domain';
-
-import type { MineSweeperMutation } from './__generated__/MineSweeperMutation.graphql';
 import type { MineSweeperQuery } from './__generated__/MineSweeperQuery.graphql';
+import type { MineSweeperMutation } from './__generated__/MineSweeperMutation.graphql';
+import { ResultModal } from './ResultModal';
+import { boardStyles, styles } from './styles';
 
-const MineSweeper = () => {
+export default function MineSweeper() {
+  const { gameSlug } = useParams();
+  const slug = gameSlug || 'Our Game';
+
+  const [board, setBoard] = useState<Board>(new Board({ blocks: [] }));
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
-  const [board, setBoard] = useState<Board>(new Board({ blocks: [] }));
-  const { sendBoardClick } = useUpdateBoard();
-  const params = useParams();
-  const resp = useLazyLoadQuery<MineSweeperQuery>(
-    graphql`
-      query MineSweeperQuery($slug: String!) {
-        mineSweeper(slug: $slug) {
-          slug
-          flags
-          gameOver
-          won
-          blocks {
-            coordinates {
-              x
-              y
-            }
-            display
-            isFlagged
-          }
-        }
-      }
-    `,
-    { slug: params.gameSlug || 'Our Game' }
-  );
 
-  const click = (block: MineBlock) => {
-    if (gameOver) {
-      return;
-    }
-    const action = 'dig';
+  const game = useMineSweeperQuery(slug);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleAction = (action: 'dig' | 'flag') => (block: MineBlock) => {
+    if (gameOver) return;
     sendBoardClick(board.slug, block.coordinates, action, (newBoard, gameOver, won) => {
       setBoard(newBoard);
       setGameOver(gameOver);
@@ -52,41 +30,39 @@ const MineSweeper = () => {
     });
   };
 
-  const handleRightClick = (block: MineBlock) => {
-    if (gameOver) {
-      return;
-    }
-    const action = 'flag';
-    sendBoardClick(board.slug, block.coordinates, action, (newBoard, gameOver, won) => {
-      setBoard(newBoard);
-      setGameOver(gameOver);
-      setWon(won);
-    });
-  };
+  const dig = handleAction('dig');
+  const flag = handleAction('flag');
 
   useEffect(() => {
-    setBoard(Board.fromDto(resp.mineSweeper));
-    setGameOver(resp.mineSweeper.gameOver);
-    setWon(resp.mineSweeper.won);
-  }, []);
+    setBoard(Board.fromDto(game));
+    setGameOver(game.gameOver);
+    setWon(game.won);
+
+    // Show modal only when a game ends
+    if (game.gameOver || game.won) {
+      setShowModal(true);
+    }
+  }, [game]);
+
+  const { sendBoardClick } = useUpdateBoard();
 
   return (
-    <div>
-      <h1>Mine Sweeper</h1>
-      <h2>Welcome to the game {params.gameSlug}</h2>
-      <p>
-        <a href={`/${generateSlug()}/`}>new game</a>
-      </p>
-      {gameOver && <div>Game Over</div>}
-      {won && <div>You won!</div>}
-      <MineSweeperBoard
-        board={board}
-        click={click}
-        rightClick={handleRightClick}
-      ></MineSweeperBoard>
+    <div style={styles.container}>
+      <h1 style={styles.title}>💣 Mine Sweeper</h1>
+      <h2 style={styles.subtitle}>Game: {slug}</h2>
+
+      <a style={styles.newGame} href={`/${generateSlug()}/`}>
+        ➕ Start New Game
+      </a>
+
+      <MineSweeperBoard board={board} click={dig} rightClick={flag} />
+
+      {showModal && (gameOver || won) && (
+        <ResultModal result={won ? 'win' : 'lose'} onClose={() => setShowModal(false)} />
+      )}
     </div>
   );
-};
+}
 
 interface MineSweeperProps {
   board: Board;
@@ -98,56 +74,62 @@ export function MineSweeperBoard({ board, click, rightClick }: MineSweeperProps)
   const [grid, setGrid] = useState([]);
 
   useEffect(() => {
-    const newGrid = [...gridFromBoard(board)];
-    setGrid(newGrid);
+    setGrid([...gridFromBoard(board)]);
   }, [board]);
 
   return (
-    <table style={{ borderCollapse: 'collapse' }}>
-      <tbody>
-        {grid.map((row, rowIndex) => (
-          <tr key={rowIndex}>
-            {row.map((block, colIndex) => (
-              <td
-                key={`${rowIndex}${colIndex}`}
-                style={{
-                  border: '1px solid #ccc',
-                  padding: '4px',
-                  textAlign: 'center',
-                  width: '20px',
-                  height: '20px',
-                  fontFamily: 'monospace',
-                }}
-                onClick={() => {
-                  click(block);
-                }}
-                onContextMenu={(event) => {
-                  event.preventDefault();
-                  rightClick(block);
-                }}
-              >
-                {block.display}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div style={boardStyles.wrapper}>
+      <table style={boardStyles.table}>
+        <tbody>
+          {grid.map((row, r) => (
+            <tr key={r}>
+              {row.map((block, c) => (
+                <td
+                  key={`${r}${c}`}
+                  style={{
+                    ...boardStyles.cell,
+                    backgroundColor: block.isFlagged ? '#fffae6' : '#f0f0f0',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => click(block)}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    rightClick(block);
+                  }}
+                >
+                  {block.display}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
-export default MineSweeper;
-
-function gridFromBoard(board: Board) {
-  const width = Math.max(...board.blocks.map((b) => b.coordinates.x + 1));
-  const height = Math.max(...board.blocks.map((b) => b.coordinates.y + 1));
-  const grid: MineBlock[][] = Array.from({ length: width }, () => Array.from({ length: height }));
-
-  for (const block of board.blocks) {
-    const { x, y } = block.coordinates;
-    grid[x][y] = block;
+const MineSweeperQueryNode = graphql`
+  query MineSweeperQuery($slug: String!) {
+    mineSweeper(slug: $slug) {
+      slug
+      flags
+      gameOver
+      won
+      blocks {
+        coordinates {
+          x
+          y
+        }
+        display
+        isFlagged
+      }
+    }
   }
-  return grid;
+`;
+
+function useMineSweeperQuery(slug: string) {
+  const data = useLazyLoadQuery<MineSweeperQuery>(MineSweeperQueryNode, { slug });
+  return data.mineSweeper;
 }
 
 const UpdateBlockMutation = graphql`
@@ -195,4 +177,17 @@ function useUpdateBoard() {
   };
 
   return { sendBoardClick, isInFlight };
+}
+
+/* --------------------------------------------------
+   Helper
+-------------------------------------------------- */
+function gridFromBoard(board: Board) {
+  const width = Math.max(...board.blocks.map((b) => b.coordinates.x + 1));
+  const height = Math.max(...board.blocks.map((b) => b.coordinates.y + 1));
+  const grid: MineBlock[][] = Array.from({ length: width }, () => Array.from({ length: height }));
+  for (const block of board.blocks) {
+    grid[block.coordinates.x][block.coordinates.y] = block;
+  }
+  return grid;
 }
