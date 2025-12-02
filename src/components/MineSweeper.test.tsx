@@ -27,7 +27,6 @@ test('displays the mine sweeper board', async () => {
     })
   );
 
-  screen.debug();
   // Wait for the component to update after the data is fetched
   await waitFor(() => screen.getByText('Mine Sweeper'));
 

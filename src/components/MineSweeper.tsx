@@ -21,30 +21,28 @@ export default function MineSweeper() {
   const game = useMineSweeperQuery(slug);
   const [showModal, setShowModal] = useState(false);
 
-  const handleAction = (action: 'dig' | 'flag') => (block: MineBlock) => {
-    if (gameOver) return;
-    sendBoardClick(board.slug, block.coordinates, action, (newBoard, gameOver, won) => {
-      setBoard(newBoard);
-      setGameOver(gameOver);
-      setWon(won);
-    });
-  };
-
-  const dig = handleAction('dig');
-  const flag = handleAction('flag');
+  const { sendBoardClick } = useUpdateBoard();
 
   useEffect(() => {
     setBoard(Board.fromDto(game));
     setGameOver(game.gameOver);
     setWon(game.won);
 
-    // Show modal only when a game ends
-    if (game.gameOver || game.won) {
-      setShowModal(true);
-    }
+    setShowModal(game.gameOver || game.won);
   }, [game]);
 
-  const { sendBoardClick } = useUpdateBoard();
+  const handleAction = (action: 'dig' | 'flag') => (block: MineBlock) => {
+    if (gameOver) return;
+    sendBoardClick(board.slug, block.coordinates, action, (newBoard, gameOver, won) => {
+      setBoard(newBoard);
+      setGameOver(gameOver);
+      setWon(won);
+      setShowModal(gameOver || won);
+    });
+  };
+
+  const dig = handleAction('dig');
+  const flag = handleAction('flag');
 
   return (
     <div style={styles.container}>
@@ -57,7 +55,7 @@ export default function MineSweeper() {
 
       <MineSweeperBoard board={board} click={dig} rightClick={flag} />
 
-      {showModal && (gameOver || won) && (
+      {showModal && (
         <ResultModal result={won ? 'win' : 'lose'} onClose={() => setShowModal(false)} />
       )}
     </div>

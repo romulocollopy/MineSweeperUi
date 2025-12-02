@@ -1,13 +1,6 @@
 import { generateSlug } from 'random-word-slugs';
 
-export function ResultModal({
-  result,
-  onClose,
-}: {
-  result: 'win' | 'lose';
-  slug: string;
-  onClose: () => void;
-}) {
+export function ResultModal({ result, onClose }: { result: 'win' | 'lose'; onClose: () => void }) {
   const message = result === 'win' ? '🎉 You Won!' : '💥 Game Over';
 
   return (
