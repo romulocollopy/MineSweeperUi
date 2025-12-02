@@ -5,18 +5,19 @@ import { Board } from './domain';
 describe('Domain tests', () => {
   const boardDto = {
     blocks: [
-      { coordinates: { x: 0, y: 0 }, isBomb: false },
-      { coordinates: { x: 0, y: 1 }, isBomb: true },
-      { coordinates: { x: 0, y: 2 }, isBomb: false },
+      { coordinates: { x: 0, y: 0 }, display: '', isFlagged: false },
+      { coordinates: { x: 0, y: 1 }, display: '', isFlagged: false },
+      { coordinates: { x: 0, y: 2 }, display: '', isFlagged: false },
 
-      { coordinates: { x: 1, y: 0 }, isBomb: false },
-      { coordinates: { x: 1, y: 1 }, isBomb: false },
-      { coordinates: { x: 1, y: 2 }, isBomb: true },
-
-      { coordinates: { x: 2, y: 0 }, isBomb: true },
-      { coordinates: { x: 2, y: 1 }, isBomb: false },
-      { coordinates: { x: 2, y: 2 }, isBomb: false },
+      { coordinates: { x: 1, y: 0 }, display: '', isFlagged: false },
+      { coordinates: { x: 1, y: 1 }, display: '', isFlagged: false },
+      { coordinates: { x: 1, y: 2 }, display: '', isFlagged: false },
+      { coordinates: { x: 2, y: 0 }, display: '', isFlagged: false },
+      { coordinates: { x: 2, y: 1 }, display: '', isFlagged: false },
+      { coordinates: { x: 2, y: 2 }, display: '', isFlagged: false },
     ],
+    flags: 40,
+    slug: '',
   };
 
   const board = Board.fromDto(boardDto);
@@ -32,30 +33,12 @@ describe('Domain tests', () => {
   });
 });
 
-export function generateBoard(width: number, height: number, bombCount: number): MineBlockDto[] {
-  const totalBlocks = width * height;
-
-  if (bombCount > totalBlocks) {
-    throw new Error('Bomb count cannot exceed total number of blocks');
-  }
-
-  // --- 1. Generate all coordinates ---
+export function generateBoard(width: number, height: number): MineBlockDto[] {
   const blocks: MineBlockDto[] = [];
   for (let x = 0; x < width; x++) {
     for (let y = 0; y < height; y++) {
-      blocks.push({ coordinates: { x, y }, isBomb: false });
+      blocks.push({ coordinates: { x, y }, display: '', isFlagged: false });
     }
-  }
-
-  // --- 2. Choose random bomb positions ---
-  const bombIndexes = new Set<number>();
-  while (bombIndexes.size < bombCount) {
-    bombIndexes.add(Math.floor(Math.random() * totalBlocks));
-  }
-
-  // --- 3. Mark bombs ---
-  for (const index of bombIndexes) {
-    blocks[index].isBomb = true;
   }
 
   return blocks;

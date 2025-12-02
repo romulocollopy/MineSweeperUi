@@ -19,7 +19,7 @@ test('displays the mine sweeper board', async () => {
   // Mock the query response
   env.mock.resolveMostRecentOperation((operation) =>
     MockPayloadGenerator.generate(operation, {
-      MineSweeper: () => ({
+      MineSweeper: (slug) => ({
         board: {
           blocks: [generateBoard(16, 16, 40)],
         },

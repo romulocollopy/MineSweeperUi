@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { generateSlug } from 'random-word-slugs';
 
 import { Board, MineBlock } from '../domain';
@@ -9,22 +9,23 @@ import type { MineSweeperQuery } from './__generated__/MineSweeperQuery.graphql'
 import type { MineSweeperMutation } from './__generated__/MineSweeperMutation.graphql';
 import { ResultModal } from './ResultModal';
 import { boardStyles, styles } from './styles';
+import type { Mutable } from '../types';
 
 export default function MineSweeper() {
   const { gameSlug } = useParams();
   const slug = gameSlug || 'Our Game';
 
-  const [board, setBoard] = useState<Board>(new Board({ blocks: [] }));
+  const [board, setBoard] = useState<Board>(new Board({ blocks: [], slug: '', flags: 0 }));
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
 
-  const game = useMineSweeperQuery(slug);
   const [showModal, setShowModal] = useState(false);
 
+  const game = useMineSweeperQuery(slug);
   const { sendBoardClick } = useUpdateBoard();
 
   useEffect(() => {
-    setBoard(Board.fromDto(game));
+    setBoard(Board.fromDto({ ...game }));
     setGameOver(game.gameOver);
     setWon(game.won);
 
@@ -49,9 +50,9 @@ export default function MineSweeper() {
       <h1 style={styles.title}>💣 Mine Sweeper</h1>
       <h2 style={styles.subtitle}>Game: {slug}</h2>
 
-      <a style={styles.newGame} href={`/${generateSlug()}/`}>
+      <Link style={styles.newGame} to={`/${generateSlug()}/`}>
         ➕ Start New Game
-      </a>
+      </Link>
 
       <MineSweeperBoard board={board} click={dig} rightClick={flag} />
 
@@ -69,7 +70,7 @@ interface MineSweeperProps {
 }
 
 export function MineSweeperBoard({ board, click, rightClick }: MineSweeperProps) {
-  const [grid, setGrid] = useState([]);
+  const [grid, setGrid] = useState<MineBlock[][]>([[]]);
 
   useEffect(() => {
     setGrid([...gridFromBoard(board)]);
@@ -127,7 +128,7 @@ const MineSweeperQueryNode = graphql`
 
 function useMineSweeperQuery(slug: string) {
   const data = useLazyLoadQuery<MineSweeperQuery>(MineSweeperQueryNode, { slug });
-  return data.mineSweeper;
+  return data.mineSweeper as Mutable<typeof data.mineSweeper>;
 }
 
 const UpdateBlockMutation = graphql`
@@ -165,7 +166,9 @@ function useUpdateBoard() {
       onCompleted: (data) => {
         if (data?.updateBoard) {
           onCompleted(
-            Board.fromDto(data.updateBoard.mineSweeper),
+            Board.fromDto(
+              data.updateBoard.mineSweeper as Mutable<typeof data.updateBoard.mineSweeper>
+            ),
             data.updateBoard.gameOver,
             data.updateBoard.won
           );

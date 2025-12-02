@@ -1,4 +1,5 @@
 import { generateSlug } from 'random-word-slugs';
+import { Link } from 'react-router-dom';
 
 export function ResultModal({ result, onClose }: { result: 'win' | 'lose'; onClose: () => void }) {
   const message = result === 'win' ? '🎉 You Won!' : '💥 Game Over';
@@ -16,9 +17,9 @@ export function ResultModal({ result, onClose }: { result: 'win' | 'lose'; onClo
         <h1 style={modalStyles.title}>{message}</h1>
 
         <div style={modalStyles.buttons}>
-          <a href={`/${generateSlug()}/`} style={modalStyles.btnPrimary}>
+          <Link to={`/${generateSlug()}/`} style={modalStyles.btnPrimary}>
             ➕ New Game
-          </a>
+          </Link>
         </div>
       </div>
     </div>

@@ -11,7 +11,10 @@ export interface Coordinates {
 
 export interface MineBlockDto {
   coordinates: Coordinates;
-  isBomb: boolean;
   display: string;
   isFlagged: boolean;
 }
+
+export type Mutable<T> = {
+  -readonly [P in keyof T]: Mutable<T[P]>;
+};
