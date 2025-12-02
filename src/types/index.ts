@@ -12,4 +12,6 @@ export interface Coordinates {
 export interface MineBlockDto {
   coordinates: Coordinates;
   isBomb: boolean;
+  display: string;
+  isFlagged: boolean;
 }

@@ -20,6 +20,9 @@ importers:
       graphql:
         specifier: ^16.12.0
         version: 16.12.0
+      random-word-slugs:
+        specifier: ^0.1.7
+        version: 0.1.7
       react:
         specifier: ^19.1.1
         version: 19.2.0
@@ -66,6 +69,9 @@ importers:
       '@types/relay-runtime':
         specifier: ^19.0.3
         version: 19.0.3
+      '@types/relay-test-utils':
+        specifier: ^19.0.0
+        version: 19.0.0
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.46.2
         version: 8.46.2(@typescript-eslint/parser@8.46.2(eslint@9.39.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.0(jiti@2.6.1))(typescript@5.9.3)
@@ -1121,6 +1127,9 @@ packages:
 
   '@types/relay-runtime@19.0.3':
     resolution: {integrity: sha512-pvpWWQq5e9KeESF8klQaP2igLLhr2bRd3XxVCxNpGElsPQiP6Mejr59RT9/OGY3O3i8jAGGQsshVe0QCQDbxNg==}
+
+  '@types/relay-test-utils@19.0.0':
+    resolution: {integrity: sha512-yC/wVgDetV+88HrHLKlesIfju3RGsp32vLs0IiwBPKD0npQSTrFddcP3FNPe5Kkk4/Y/kgY3oR/DA8g8Bmmppw==}
 
   '@types/ws@8.18.1':
     resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
@@ -2668,6 +2677,9 @@ packages:
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
+
+  random-word-slugs@0.1.7:
+    resolution: {integrity: sha512-8cyzxOIDeLFvwSPTgCItMXHGT5ZPkjhuFKUTww06Xg1dNMXuGxIKlARvS7upk6JXIm41ZKXmtlKR1iCRWklKmg==}
 
   react-dom@19.2.0:
     resolution: {integrity: sha512-UlbRu4cAiGaIewkPyiRGJk0imDN2T3JjieT6spoL2UeSf5od4n5LB/mQ4ejmxhCFT1tYe8IvaFulzynWovsEFQ==}
@@ -4432,6 +4444,12 @@ snapshots:
 
   '@types/relay-runtime@19.0.3': {}
 
+  '@types/relay-test-utils@19.0.0':
+    dependencies:
+      '@types/react': 19.2.2
+      '@types/react-relay': 18.2.1
+      '@types/relay-runtime': 19.0.3
+
   '@types/ws@8.18.1':
     dependencies:
       '@types/node': 24.9.2
@@ -6163,6 +6181,8 @@ snapshots:
   punycode@2.3.1: {}
 
   queue-microtask@1.2.3: {}
+
+  random-word-slugs@0.1.7: {}
 
   react-dom@19.2.0(react@19.2.0):
     dependencies:

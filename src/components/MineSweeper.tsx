@@ -2,14 +2,20 @@ import { useEffect, useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
 
-import { Board, MineBlock } from '../domain';
+import { generateSlug } from 'random-word-slugs';
+
+import { useMutation } from 'react-relay';
+import { Board } from '../domain';
+
+import { MineBlock } from '../domain';
+
+import type { MineSweeperMutation } from './__generated__/MineSweeperMutation.graphql';
 import type { MineSweeperQuery } from './__generated__/MineSweeperQuery.graphql';
-import { useDigBlock } from './mutations';
 
 const MineSweeper = () => {
   const [running, setRunning] = useState(true);
   const [board, setBoard] = useState<Board>(new Board({ blocks: [] }));
-  const { dig } = useDigBlock();
+  const { sendBoardClick } = useUpdateBoard();
   const params = useParams();
   const resp = useLazyLoadQuery<MineSweeperQuery>(
     graphql`
@@ -32,26 +38,43 @@ const MineSweeper = () => {
   );
 
   const click = (block: MineBlock) => {
-    dig(board.slug, block.coordinates, (newBoard, gameOver) => {
+    if (!running) {
+      return;
+    }
+    const action = 'dig';
+    sendBoardClick(board.slug, block.coordinates, action, (newBoard, gameOver) => {
+      setBoard(newBoard);
+      if (gameOver) setRunning(false);
+    });
+  };
+
+  const handleRightClick = (block: MineBlock) => {
+    if (!running) {
+      return;
+    }
+    const action = 'flag';
+    sendBoardClick(board.slug, block.coordinates, action, (newBoard, gameOver) => {
       setBoard(newBoard);
       if (gameOver) setRunning(false);
     });
   };
 
   useEffect(() => {
-    setBoard(resp.mineSweeper);
+    setBoard(Board.fromDto(resp.mineSweeper));
   }, []);
 
   return (
     <div>
       <h1>Mine Sweeper</h1>
       <h2>Welcome to the game {params.gameSlug}</h2>
+      <p>
+        <a href={`/${generateSlug()}/`}>new game</a>
+      </p>
       {!running && <div>Game Over</div>}
       <MineSweeperBoard
         board={board}
-        setBoard={setBoard}
-        setRunning={setRunning}
         click={click}
+        rightClick={handleRightClick}
       ></MineSweeperBoard>
     </div>
   );
@@ -59,10 +82,11 @@ const MineSweeper = () => {
 
 interface MineSweeperProps {
   board: Board;
-  click: null;
+  click: (block: MineBlock) => void;
+  rightClick: (block: MineBlock) => void;
 }
 
-export function MineSweeperBoard({ board, click }: MineSweeperProps) {
+export function MineSweeperBoard({ board, click, rightClick }: MineSweeperProps) {
   const [grid, setGrid] = useState([]);
 
   useEffect(() => {
@@ -89,6 +113,10 @@ export function MineSweeperBoard({ board, click }: MineSweeperProps) {
                 onClick={() => {
                   click(block);
                 }}
+                onContextMenu={(event) => {
+                  event.preventDefault();
+                  rightClick(block);
+                }}
               >
                 {block.display}
               </td>
@@ -112,4 +140,46 @@ function gridFromBoard(board: Board) {
     grid[x][y] = block;
   }
   return grid;
+}
+
+const UpdateBlockMutation = graphql`
+  mutation MineSweeperMutation($slug: String!, $coordinates: CoordinatesInput!, $action: String!) {
+    updateBoard(slug: $slug, coordinates: $coordinates, action: $action) {
+      mineSweeper {
+        slug
+        flags
+        blocks {
+          coordinates {
+            x
+            y
+          }
+          display
+          isFlagged
+        }
+      }
+      gameOver
+    }
+  }
+`;
+
+function useUpdateBoard() {
+  const [commit, isInFlight] = useMutation<MineSweeperMutation>(UpdateBlockMutation);
+
+  const sendBoardClick = (
+    slug: string,
+    coordinates: { x: number; y: number },
+    action: string,
+    onCompleted: (board: Board, gameOver: boolean) => void
+  ) => {
+    commit({
+      variables: { slug, coordinates, action },
+      onCompleted: (data) => {
+        if (data?.updateBoard) {
+          onCompleted(Board.fromDto(data.updateBoard.mineSweeper), data.updateBoard.gameOver);
+        }
+      },
+    });
+  };
+
+  return { sendBoardClick, isInFlight };
 }

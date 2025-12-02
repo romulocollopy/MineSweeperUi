@@ -29,30 +29,31 @@ export class MineBlock {
   }
 
   dig(board: Board) {
-    console.log('dig!');
+    console.log(`dig! ${board}`);
   }
 }
 
 export class Board {
+  slug: string;
+  flags: number;
   blocks: MineBlock[];
-  constructor({ blocks }: { blocks: MineBlock[] }) {
+  constructor({ blocks, slug, flags }: { blocks: MineBlock[]; slug: string; flags: number }) {
+    this.slug = slug;
+    this.flags = flags;
     this.blocks = blocks;
   }
 
-  get(x: number, y: number) {
-    return this.blocks.find((b) => b.coordinates.x === x && b.coordinates.y === y);
-  }
-
   static fromDto = ({
+    slug,
     blocks,
-    isFlagged,
-    display,
+    flags,
   }: {
+    slug: string;
     blocks: MineBlockDto[];
-    isFlagged: boolean;
-    display: string;
+    flags: number;
   }) => {
-    return new Board({ blocks: blocks.map((b) => new MineBlock(b)), isFlagged, display });
+    const mineBlocks = blocks.map((b) => new MineBlock(b));
+    return new Board({ blocks: mineBlocks, flags, slug });
   };
 }
 

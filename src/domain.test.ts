@@ -30,16 +30,6 @@ describe('Domain tests', () => {
   test('Instantiates', () => {
     expect(board.blocks.length).to.equal(9);
   });
-
-  test('get block from board', () => {
-    const block = board.get(2, 0);
-    block?.dig(board);
-  });
-
-  test('dig', () => {
-    const block = board.get(2, 0);
-    block?.dig(board);
-  });
 });
 
 export function generateBoard(width: number, height: number, bombCount: number): MineBlockDto[] {
