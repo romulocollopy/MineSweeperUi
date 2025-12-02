@@ -177,15 +177,25 @@ function useUpdateBoard() {
   return { sendBoardClick, isInFlight };
 }
 
-/* --------------------------------------------------
-   Helper
--------------------------------------------------- */
 function gridFromBoard(board: Board) {
-  const width = Math.max(...board.blocks.map((b) => b.coordinates.x + 1));
-  const height = Math.max(...board.blocks.map((b) => b.coordinates.y + 1));
-  const grid: MineBlock[][] = Array.from({ length: width }, () => Array.from({ length: height }));
-  for (const block of board.blocks) {
-    grid[block.coordinates.x][block.coordinates.y] = block;
+  if (!board.blocks || board.blocks.length === 0) {
+    return [];
   }
+
+  const maxX = Math.max(...board.blocks.map((b) => b.coordinates.x));
+  const maxY = Math.max(...board.blocks.map((b) => b.coordinates.y));
+
+  const grid: MineBlock[][] = Array.from({ length: maxX + 1 }, () =>
+    Array.from({ length: maxY + 1 })
+  );
+
+  for (const block of board.blocks) {
+    const { x, y } = block.coordinates;
+
+    // Defensive check so tests never explode
+    if (!grid[x]) grid[x] = [];
+    grid[x][y] = block;
+  }
+
   return grid;
 }

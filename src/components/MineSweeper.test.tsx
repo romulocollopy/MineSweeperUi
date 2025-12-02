@@ -28,8 +28,8 @@ test('displays the mine sweeper board', async () => {
   );
 
   // Wait for the component to update after the data is fetched
-  await waitFor(() => screen.getByText('Mine Sweeper'));
+  await waitFor(() => screen.getByText('💣 Mine Sweeper'));
 
   // Assert the user name is displayed
-  expect(screen.getByText('Mine Sweeper')).toBeInTheDocument();
+  expect(screen.getByText('💣 Mine Sweeper')).toBeInTheDocument();
 });
