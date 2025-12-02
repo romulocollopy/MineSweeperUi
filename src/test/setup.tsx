@@ -1,9 +1,10 @@
 // src/test/setup.tsx
 import { expect, vi } from 'vitest';
+import '@testing-library/jest-dom';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import { type ReactElement } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
-import { createMockEnvironment, MockEnvironment } from 'relay-test-utils';
+import { createMockEnvironment, type MockEnvironment } from 'relay-test-utils';
 
 // Extend expect with jest-dom matchers
 expect.extend(matchers);

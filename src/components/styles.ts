@@ -9,7 +9,7 @@ export const styles = {
     textDecoration: 'none',
     fontSize: '16px',
   },
-};
+} as const;
 
 export const boardStyles = {
   wrapper: { display: 'inline-block', padding: '10px', borderRadius: '12px' },
