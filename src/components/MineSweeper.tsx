@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { generateSlug } from 'random-word-slugs';
 
 import { Board, MineBlock } from '../domain';

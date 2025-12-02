@@ -1,21 +1,18 @@
 # syntax=docker.io/docker/dockerfile:1
 
-# Use Debian-based Node image
 FROM node:24.11.1-bookworm AS base
 
-# Install dependencies only when needed
 FROM base AS deps
-# Install libc6-compat equivalent on Debian
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libc6 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Setup pnpm
 RUN corepack enable && corepack prepare pnpm@10.24.0 --activate
 
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+COPY package.json pnpm-lock.yaml* .npmrc* ./
 RUN pnpm install --frozen-lockfile
 
 # Rebuild the source code only when needed
@@ -28,35 +25,29 @@ COPY . .
 RUN corepack enable && corepack prepare pnpm@10.24.0 --activate
 RUN pnpm install --frozen-lockfile
 
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+# Build the application
+RUN pnpm run build
 
+# Production Image with Nginx
+FROM nginx:1.27.4-alpine AS prod
 
-# Production Image
-FROM base AS prod
-
-ARG PORT=3000
-ARG HOSTNAME="0.0.0.0"
+ARG PORT=80
 ARG NODE_ENV=production
 
-WORKDIR /app
-
 ENV \
-  NODE_ENV=production \
-  HOSTNAME=${HOSTNAME} \
-  PORT=${PORT}
+    NODE_ENV=production \
+    PORT=${PORT}
 
-# Create non-root user similar to Alpine version
-RUN groupadd -g 1001 runner && \
-    useradd -m -u 1001 -g runner runner
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=runner:runner /app/dist /app
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-USER runner
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
+    chmod -R 755 /usr/share/nginx/html
 
-EXPOSE 3000
+EXPOSE ${PORT}
 
-CMD ["pnpm", "dev"]
+CMD ["nginx", "-g", "daemon off;"]
 
 
 FROM base AS dev
