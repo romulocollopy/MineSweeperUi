@@ -9,9 +9,5 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.tsx'],
-    // Important: Transform GraphQL tags in tests
-    transformMode: {
-      web: [/\.[jt]sx?$/],
-    },
   },
 });
