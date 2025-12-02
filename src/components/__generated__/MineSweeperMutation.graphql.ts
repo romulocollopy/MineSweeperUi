@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0999de0d08bcde6e844aa32fad3ce509>>
+ * @generated SignedSource<<c6f9867aa25a2afa73dafb45f5d9661a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -33,6 +33,7 @@ export type MineSweeperMutation$data = {
       readonly flags: number;
       readonly slug: string;
     };
+    readonly won: boolean;
   };
 };
 export type MineSweeperMutation = {
@@ -160,6 +161,13 @@ v3 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
+        "name": "won",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
         "name": "gameOver",
         "storageKey": null
       }
@@ -193,16 +201,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "605adcb7d74168d0a41993db98faa4f2",
+    "cacheID": "72bc86a18ee07f4bbd7fd72657186ea3",
     "id": null,
     "metadata": {},
     "name": "MineSweeperMutation",
     "operationKind": "mutation",
-    "text": "mutation MineSweeperMutation(\n  $slug: String!\n  $coordinates: CoordinatesInput!\n  $action: String!\n) {\n  updateBoard(slug: $slug, coordinates: $coordinates, action: $action) {\n    mineSweeper {\n      slug\n      flags\n      blocks {\n        coordinates {\n          x\n          y\n        }\n        display\n        isFlagged\n      }\n    }\n    gameOver\n  }\n}\n"
+    "text": "mutation MineSweeperMutation(\n  $slug: String!\n  $coordinates: CoordinatesInput!\n  $action: String!\n) {\n  updateBoard(slug: $slug, coordinates: $coordinates, action: $action) {\n    mineSweeper {\n      slug\n      flags\n      blocks {\n        coordinates {\n          x\n          y\n        }\n        display\n        isFlagged\n      }\n    }\n    won\n    gameOver\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b7c72f1873fa0274fa812228a00e6515";
+(node as any).hash = "998de77c89b19cc2fcbb1aae5eb1f62b";
 
 export default node;

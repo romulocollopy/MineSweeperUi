@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d775a5b9c2cd70937bb47f7cbf72725c>>
+ * @generated SignedSource<<0b3909bbd4234d349053af9031efa177>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,7 +23,9 @@ export type MineSweeperQuery$data = {
       readonly isFlagged: boolean;
     }>;
     readonly flags: number;
+    readonly gameOver: boolean;
     readonly slug: string;
+    readonly won: boolean;
   };
 };
 export type MineSweeperQuery = {
@@ -66,6 +68,20 @@ v1 = [
         "args": null,
         "kind": "ScalarField",
         "name": "flags",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "gameOver",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "won",
         "storageKey": null
       },
       {
@@ -140,16 +156,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "6a4de4c7f9e37842a8587a4df3da1475",
+    "cacheID": "577bfe833e4e790764da767fec523566",
     "id": null,
     "metadata": {},
     "name": "MineSweeperQuery",
     "operationKind": "query",
-    "text": "query MineSweeperQuery(\n  $slug: String!\n) {\n  mineSweeper(slug: $slug) {\n    slug\n    flags\n    blocks {\n      coordinates {\n        x\n        y\n      }\n      display\n      isFlagged\n    }\n  }\n}\n"
+    "text": "query MineSweeperQuery(\n  $slug: String!\n) {\n  mineSweeper(slug: $slug) {\n    slug\n    flags\n    gameOver\n    won\n    blocks {\n      coordinates {\n        x\n        y\n      }\n      display\n      isFlagged\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "6b86412d870791f10ac9eefc31762949";
+(node as any).hash = "75c743d7302afed28136831edd631650";
 
 export default node;

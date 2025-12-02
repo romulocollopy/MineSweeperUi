@@ -13,7 +13,8 @@ import type { MineSweeperMutation } from './__generated__/MineSweeperMutation.gr
 import type { MineSweeperQuery } from './__generated__/MineSweeperQuery.graphql';
 
 const MineSweeper = () => {
-  const [running, setRunning] = useState(true);
+  const [gameOver, setGameOver] = useState(false);
+  const [won, setWon] = useState(false);
   const [board, setBoard] = useState<Board>(new Board({ blocks: [] }));
   const { sendBoardClick } = useUpdateBoard();
   const params = useParams();
@@ -23,6 +24,8 @@ const MineSweeper = () => {
         mineSweeper(slug: $slug) {
           slug
           flags
+          gameOver
+          won
           blocks {
             coordinates {
               x
@@ -38,29 +41,33 @@ const MineSweeper = () => {
   );
 
   const click = (block: MineBlock) => {
-    if (!running) {
+    if (gameOver) {
       return;
     }
     const action = 'dig';
-    sendBoardClick(board.slug, block.coordinates, action, (newBoard, gameOver) => {
+    sendBoardClick(board.slug, block.coordinates, action, (newBoard, gameOver, won) => {
       setBoard(newBoard);
-      if (gameOver) setRunning(false);
+      setGameOver(gameOver);
+      setWon(won);
     });
   };
 
   const handleRightClick = (block: MineBlock) => {
-    if (!running) {
+    if (gameOver) {
       return;
     }
     const action = 'flag';
-    sendBoardClick(board.slug, block.coordinates, action, (newBoard, gameOver) => {
+    sendBoardClick(board.slug, block.coordinates, action, (newBoard, gameOver, won) => {
       setBoard(newBoard);
-      if (gameOver) setRunning(false);
+      setGameOver(gameOver);
+      setWon(won);
     });
   };
 
   useEffect(() => {
     setBoard(Board.fromDto(resp.mineSweeper));
+    setGameOver(resp.mineSweeper.gameOver);
+    setWon(resp.mineSweeper.won);
   }, []);
 
   return (
@@ -70,7 +77,8 @@ const MineSweeper = () => {
       <p>
         <a href={`/${generateSlug()}/`}>new game</a>
       </p>
-      {!running && <div>Game Over</div>}
+      {gameOver && <div>Game Over</div>}
+      {won && <div>You won!</div>}
       <MineSweeperBoard
         board={board}
         click={click}
@@ -157,6 +165,7 @@ const UpdateBlockMutation = graphql`
           isFlagged
         }
       }
+      won
       gameOver
     }
   }
@@ -169,13 +178,17 @@ function useUpdateBoard() {
     slug: string,
     coordinates: { x: number; y: number },
     action: string,
-    onCompleted: (board: Board, gameOver: boolean) => void
+    onCompleted: (board: Board, gameOver: boolean, won: boolean) => void
   ) => {
     commit({
       variables: { slug, coordinates, action },
       onCompleted: (data) => {
         if (data?.updateBoard) {
-          onCompleted(Board.fromDto(data.updateBoard.mineSweeper), data.updateBoard.gameOver);
+          onCompleted(
+            Board.fromDto(data.updateBoard.mineSweeper),
+            data.updateBoard.gameOver,
+            data.updateBoard.won
+          );
         }
       },
     });
