@@ -16,11 +16,13 @@ type User {
 type MineSweeper {
   slug: String!
   blocks: [Block!]!
+  flags: Int!
 }
 
 type Block {
   coordinates: Coordinates!
   display: String!
+  isFlagged: Boolean!
 }
 
 type Coordinates {

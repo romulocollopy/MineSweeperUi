@@ -2,6 +2,7 @@ import type { Coordinates, MineBlockDto } from './types';
 
 export class Boom extends Error {
   board: Board;
+
   constructor(message: string, newBoard: Board) {
     super(message);
     this.board = newBoard;
@@ -10,12 +11,21 @@ export class Boom extends Error {
 
 export class MineBlock {
   coordinates: Coordinates;
-  isBomb: boolean;
+  isFlagged: boolean;
   display: string;
 
-  constructor({ coordinates, display }: { coordinates: Coordinates; display?: string }) {
-    this.display = display || '';
+  constructor({
+    coordinates,
+    display,
+    isFlagged,
+  }: {
+    coordinates: Coordinates;
+    display: string;
+    isFlagged: boolean;
+  }) {
+    this.display = display;
     this.coordinates = coordinates;
+    this.isFlagged = isFlagged;
   }
 
   dig(board: Board) {
@@ -33,8 +43,16 @@ export class Board {
     return this.blocks.find((b) => b.coordinates.x === x && b.coordinates.y === y);
   }
 
-  static fromDto = ({ blocks }: { blocks: MineBlockDto[] }) => {
-    return new Board({ blocks: blocks.map((b) => new MineBlock(b)) });
+  static fromDto = ({
+    blocks,
+    isFlagged,
+    display,
+  }: {
+    blocks: MineBlockDto[];
+    isFlagged: boolean;
+    display: string;
+  }) => {
+    return new Board({ blocks: blocks.map((b) => new MineBlock(b)), isFlagged, display });
   };
 }
 

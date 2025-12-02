@@ -14,12 +14,14 @@ const MineSweeper = () => {
       query MineSweeperQuery($slug: String!) {
         mineSweeper(slug: $slug) {
           slug
+          flags
           blocks {
             coordinates {
               x
               y
             }
             display
+            isFlagged
           }
         }
       }
