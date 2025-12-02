@@ -50,9 +50,9 @@ export default function MineSweeper() {
       <h1 style={styles.title}>💣 Mine Sweeper</h1>
       <h2 style={styles.subtitle}>Game: {slug}</h2>
 
-      <Link style={styles.newGame} to={`/${generateSlug()}/`}>
+      <a style={styles.newGame} href={`/${generateSlug()}/`}>
         ➕ Start New Game
-      </Link>
+      </a>
 
       <MineSweeperBoard board={board} click={dig} rightClick={flag} />
 
