@@ -54,7 +54,6 @@ CMD ["pnpm", "dev", "--host", "0.0.0.0", "--port", "3000"]
 # Production Image with Nginx
 FROM nginx:1.27.4-alpine AS prod
 
-ARG PORT=80
 ARG NODE_ENV=production
 
 ENV \
@@ -68,7 +67,6 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chmod -R 755 /usr/share/nginx/html
 
-EXPOSE ${PORT}
+EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
-
