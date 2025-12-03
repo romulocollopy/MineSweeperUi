@@ -28,27 +28,6 @@ RUN pnpm install --frozen-lockfile
 # Build the application
 RUN pnpm run build
 
-# Production Image with Nginx
-FROM nginx:1.27.4-alpine AS prod
-
-ARG PORT=80
-ARG NODE_ENV=production
-
-ENV \
-    NODE_ENV=production \
-    PORT=${PORT}
-
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-RUN chown -R nginx:nginx /usr/share/nginx/html && \
-    chmod -R 755 /usr/share/nginx/html
-
-EXPOSE ${PORT}
-
-CMD ["nginx", "-g", "daemon off;"]
-
 
 FROM base AS dev
 
@@ -71,3 +50,25 @@ COPY . .
 EXPOSE 3000
 
 CMD ["pnpm", "dev", "--host", "0.0.0.0", "--port", "3000"]
+
+# Production Image with Nginx
+FROM nginx:1.27.4-alpine AS prod
+
+ARG PORT=80
+ARG NODE_ENV=production
+
+ENV \
+    NODE_ENV=production \
+    PORT=${PORT}
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
+    chmod -R 755 /usr/share/nginx/html
+
+EXPOSE ${PORT}
+
+CMD ["nginx", "-g", "daemon off;"]
+
