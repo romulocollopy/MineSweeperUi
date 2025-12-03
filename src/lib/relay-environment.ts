@@ -3,7 +3,7 @@ import type { RequestParameters, Variables } from 'relay-runtime';
 import { Environment, Network, RecordSource, Store } from 'relay-runtime';
 import { getCookie, setCookie } from 'typescript-cookie';
 
-const API_URL = import.meta.env.VITE_GRAPHQL_URL || 'http://api-minesweeper.paraplu.app/';
+const API_URL = import.meta.env.VITE_GRAPHQL_URL || 'https://api-minesweeper.paraplu.app/';
 
 axios.defaults.withCredentials = true;
 
