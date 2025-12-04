@@ -1,4 +1,3 @@
-import { Environment, Network, Store, RecordSource } from 'relay-runtime';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 
 export function createRelayTestEnvironment() {
