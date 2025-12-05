@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0b3909bbd4234d349053af9031efa177>>
+ * @generated SignedSource<<9df2b0cbca49b64f250338b5eded4fdd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,6 +10,7 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type MineSweeperQuery$variables = {
+  difficulty: string;
   slug: string;
 };
 export type MineSweeperQuery$data = {
@@ -25,6 +26,7 @@ export type MineSweeperQuery$data = {
     readonly flags: number;
     readonly gameOver: boolean;
     readonly slug: string;
+    readonly timeElapsed: number;
     readonly won: boolean;
   };
 };
@@ -34,17 +36,25 @@ export type MineSweeperQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "slug"
-  }
-],
-v1 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "difficulty"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "slug"
+},
+v2 = [
   {
     "alias": null,
     "args": [
+      {
+        "kind": "Variable",
+        "name": "difficulty",
+        "variableName": "difficulty"
+      },
       {
         "kind": "Variable",
         "name": "slug",
@@ -82,6 +92,13 @@ v1 = [
         "args": null,
         "kind": "ScalarField",
         "name": "won",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "timeElapsed",
         "storageKey": null
       },
       {
@@ -140,32 +157,38 @@ v1 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "MineSweeperQuery",
-    "selections": (v1/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v0/*: any*/)
+    ],
     "kind": "Operation",
     "name": "MineSweeperQuery",
-    "selections": (v1/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "577bfe833e4e790764da767fec523566",
+    "cacheID": "07c1e5dc3288f2469bccc70b10c66edf",
     "id": null,
     "metadata": {},
     "name": "MineSweeperQuery",
     "operationKind": "query",
-    "text": "query MineSweeperQuery(\n  $slug: String!\n) {\n  mineSweeper(slug: $slug) {\n    slug\n    flags\n    gameOver\n    won\n    blocks {\n      coordinates {\n        x\n        y\n      }\n      display\n      isFlagged\n    }\n  }\n}\n"
+    "text": "query MineSweeperQuery(\n  $slug: String!\n  $difficulty: String!\n) {\n  mineSweeper(slug: $slug, difficulty: $difficulty) {\n    slug\n    flags\n    gameOver\n    won\n    timeElapsed\n    blocks {\n      coordinates {\n        x\n        y\n      }\n      display\n      isFlagged\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "75c743d7302afed28136831edd631650";
+(node as any).hash = "eeecdbcce40bb189861ac6993bd97fe7";
 
 export default node;

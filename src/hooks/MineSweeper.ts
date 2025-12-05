@@ -5,12 +5,13 @@ import type { MineSweeperMutation } from './__generated__/MineSweeperMutation.gr
 import type { MineSweeperQuery } from './__generated__/MineSweeperQuery.graphql';
 
 export const MineSweeperGameQuery = graphql`
-  query MineSweeperQuery($slug: String!) {
-    mineSweeper(slug: $slug) {
+  query MineSweeperQuery($slug: String!, $difficulty: String!) {
+    mineSweeper(slug: $slug, difficulty: $difficulty) {
       slug
       flags
       gameOver
       won
+      timeElapsed
       blocks {
         coordinates {
           x
@@ -38,14 +39,15 @@ export const MineSweeperGameMutation = graphql`
           isFlagged
         }
       }
+      timeElapsed
       won
       gameOver
     }
   }
 `;
 
-export function useMineSweeperQuery(slug: string) {
-  const data = useLazyLoadQuery<MineSweeperQuery>(MineSweeperGameQuery, { slug });
+export function useMineSweeperQuery(slug: string, difficulty: string) {
+  const data = useLazyLoadQuery<MineSweeperQuery>(MineSweeperGameQuery, { slug, difficulty });
   return data.mineSweeper as Mutable<typeof data.mineSweeper>;
 }
 

@@ -16,11 +16,12 @@ type UpdateBlockPayload {
   mineSweeper: MineSweeper!
   gameOver: Boolean!
   won: Boolean!
+  timeElapsed: Int!
 }
 
 type Query {
   viewer: User
-  mineSweeper(slug: String!): MineSweeper!
+  mineSweeper(slug: String!, difficulty: String): MineSweeper!
 }
 
 type User {
@@ -33,8 +34,9 @@ type MineSweeper {
   slug: String!
   blocks: [Block!]!
   flags: Int!
-  gameOver: Boolean!
   won: Boolean!
+  timeElapsed: Int!
+  gameOver: Boolean!
 }
 
 type Block {

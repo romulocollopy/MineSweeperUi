@@ -1,33 +1,78 @@
-import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
 import { generateSlug } from 'random-word-slugs';
-import { useMineSweeperQuery, useUpdateBoard } from '../hooks/MineSweeper';
+import { useEffect, useState } from 'react';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { MineSweeperBoard } from '../components/MineSweeperBoard';
 import { Board, MineBlock } from '../domain';
-
+import { useMineSweeperQuery, useUpdateBoard } from '../hooks/MineSweeper';
+import { PaperH1Title, PaperLink, PaperSubtitle, PaperPage } from '../components/PaperComponents';
 import { ResultModal } from '../components/ResultModal';
-import { styles } from '../components/styles';
+
+interface DigitalDisplayProps {
+  value: number;
+  label: string;
+}
+
+const DigitalDisplay: React.FC<DigitalDisplayProps> = ({ value, label }) => {
+  const formattedValue = String(value).padStart(3, '0'); // Ensures 3 digits (e.g., 007)
+
+  const displayClasses = `
+    border-4 border-gray-900 bg-gray-900 text-lime-400 font-mono 
+    text-3xl px-3 py-1 shadow-[2px_2px_0px_#6b7280] rounded-sm
+  `;
+
+  return (
+    <div className="flex flex-col items-center">
+      <div className={displayClasses}>{formattedValue}</div>
+      <span className="text-xs font-semibold uppercase mt-1">{label}</span>
+    </div>
+  );
+};
 
 export default function MineSweeper() {
   const { gameSlug } = useParams();
   const slug = gameSlug || 'Our Game';
+  const [params, _] = useSearchParams();
+  const difficulty = params.get('difficulty') ?? 'medium';
 
   const [board, setBoard] = useState<Board>(new Board({ blocks: [], slug: '', flags: 0 }));
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
-
   const [showModal, setShowModal] = useState(false);
 
-  const game = useMineSweeperQuery(slug);
+  const [startTime, setStartTime] = useState(Date.now());
+  const [timeElapsed, setTimeElapsed] = useState(0);
+
+  const game = useMineSweeperQuery(slug, difficulty);
   const { sendBoardClick } = useUpdateBoard();
 
   useEffect(() => {
-    setBoard(Board.fromDto({ ...game }));
+    setBoard(Board.fromDto(game));
     setGameOver(game.gameOver);
     setWon(game.won);
-
     setShowModal(game.gameOver || game.won);
+    if (game.timeElapsed === 0) {
+      setStartTime(Date.now());
+    }
   }, [game]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
+    const isGameActive = !gameOver && !won && board.blocks.length > 0;
+
+    if (isGameActive) {
+      interval = setInterval(() => {
+        const currentTime = Math.floor((Date.now() - startTime) / 1000);
+        setTimeElapsed(currentTime);
+      }, 1000);
+    } else if (gameOver || won) {
+      setTimeElapsed(timeElapsed); // Keep the last recorded time
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [gameOver, won, board.blocks.length, startTime, timeElapsed]);
 
   const handleAction = (action: 'dig' | 'flag') => (block: MineBlock) => {
     if (gameOver) return;
@@ -43,19 +88,31 @@ export default function MineSweeper() {
   const flag = handleAction('flag');
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>💣 Mine Sweeper</h1>
-      <h2 style={styles.subtitle}>Game: {slug}</h2>
+    <PaperPage className="flex flex-col items-center">
+      <div className="max-w-max">
+        <Link to="/" className="float-right text-blue-500">
+          home
+        </Link>
+        <PaperH1Title>Mine Sweeper</PaperH1Title>
+        <PaperSubtitle>Game: {slug}</PaperSubtitle>
+        <div className="mb-8 flex justify-between items-center px-4 py-3 border-4 border-gray-900 bg-gray-200 shadow-[6px_6px_0px_#1f2937] rounded-lg">
+          <DigitalDisplay value={board.flags} label="Mines Left" />
 
-      <Link style={styles.newGame} to={`/${generateSlug()}/`}>
-        ➕ Start New Game
-      </Link>
+          <PaperLink to={`/${generateSlug()}/`} variant="secondary" className="text-base py-1 px-3">
+            New Game
+          </PaperLink>
 
-      <MineSweeperBoard board={board} click={dig} rightClick={flag} />
+          <DigitalDisplay value={timeElapsed} label="Time" />
+        </div>
+        {/* --------------------------- */}
+        <div className="mx-auto">
+          <MineSweeperBoard board={board} click={dig} rightClick={flag} />
+        </div>
+      </div>
 
       {showModal && (
         <ResultModal result={won ? 'win' : 'lose'} onClose={() => setShowModal(false)} />
       )}
-    </div>
+    </PaperPage>
   );
 }

@@ -1,81 +1,41 @@
 import { generateSlug } from 'random-word-slugs';
-import { Link } from 'react-router-dom';
+import { PaperLink, PaperSubtitle, paperBaseStyle } from './PaperComponents';
 
 export function ResultModal({ result, onClose }: { result: 'win' | 'lose'; onClose: () => void }) {
   const message = result === 'win' ? '🎉 You Won!' : '💥 Game Over';
 
+  const closeButtonClasses = `
+    absolute top-0 right-0 m-2 
+    bg-transparent border-none text-3xl font-bold cursor-pointer 
+    text-gray-900 hover:text-red-600 focus:outline-none p-1
+  `;
+
   return (
-    <div style={modalStyles.overlay} onClick={onClose}>
+    <div
+      className="fixed inset-0 bg-black/70 flex items-center justify-center z-[1000]"
+      onClick={onClose}
+    >
       <div
-        style={modalStyles.modal}
-        onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
+        className={`relative p-8 text-center w-[340px] ${paperBaseStyle} rounded-lg bg-white`}
+        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
       >
-        <button style={modalStyles.closeBtn} onClick={onClose}>
+        <button className={closeButtonClasses} onClick={onClose} aria-label="Close Modal">
           ×
         </button>
 
-        <h1 style={modalStyles.title}>{message}</h1>
+        <PaperSubtitle>{message}</PaperSubtitle>
 
-        <div style={modalStyles.buttons}>
-          <Link to={`/${generateSlug()}/`} style={modalStyles.btnPrimary}>
-            ➕ New Game
-          </Link>
+        <div className="flex justify-center mt-6">
+          <PaperLink
+            to={`/${generateSlug()}/`}
+            variant="primary"
+            onClick={onClose}
+            className="w-full justify-center"
+          >
+            ➕ Start New Game
+          </PaperLink>
         </div>
       </div>
     </div>
   );
 }
-
-const modalStyles = {
-  overlay: {
-    position: 'fixed' as const,
-    top: 0,
-    left: 0,
-    width: '100vw',
-    height: '100vh',
-    background: 'rgba(0,0,0,0.65)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1000,
-  },
-  modal: {
-    background: '#fff',
-    padding: '30px 40px',
-    borderRadius: '12px',
-    textAlign: 'center' as const,
-    width: '320px',
-    position: 'relative' as const,
-    boxShadow: '0 5px 20px rgba(0,0,0,0.25)',
-  },
-  closeBtn: {
-    position: 'absolute' as const,
-    top: '10px',
-    right: '10px',
-    background: 'transparent',
-    border: 'none',
-    fontSize: '24px',
-    cursor: 'pointer',
-  },
-  title: {
-    fontSize: '28px',
-    marginBottom: '20px',
-  },
-  buttons: { display: 'flex', gap: '12px', justifyContent: 'center' },
-  btn: {
-    padding: '10px 18px',
-    background: '#ccc',
-    borderRadius: '8px',
-    textDecoration: 'none',
-    fontSize: '16px',
-    color: '#000',
-  },
-  btnPrimary: {
-    padding: '10px 18px',
-    background: '#0066ee',
-    color: 'white',
-    borderRadius: '8px',
-    textDecoration: 'none',
-    fontSize: '16px',
-  },
-};

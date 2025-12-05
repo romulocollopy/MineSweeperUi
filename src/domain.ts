@@ -31,16 +31,33 @@ export class MineBlock {
   dig(board: Board) {
     console.log(`dig! ${board}`);
   }
+
+  get isRevealed() {
+    return this.display !== '';
+  }
 }
 
 export class Board {
   slug: string;
   flags: number;
   blocks: MineBlock[];
-  constructor({ blocks, slug, flags }: { blocks: MineBlock[]; slug: string; flags: number }) {
+  timeElapsed: number;
+
+  constructor({
+    blocks,
+    slug,
+    flags,
+    timeElapsed,
+  }: {
+    blocks: MineBlock[];
+    slug: string;
+    flags: number;
+    timeElapsed?: number;
+  }) {
     this.slug = slug;
     this.flags = flags;
     this.blocks = blocks;
+    this.timeElapsed = timeElapsed ?? 0;
   }
 
   static fromDto = ({

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Board, MineBlock } from '../domain';
-import { boardStyles } from './styles';
 
 interface MineSweeperProps {
   board: Board;
@@ -16,28 +15,20 @@ export function MineSweeperBoard({ board, click, rightClick }: MineSweeperProps)
   }, [board]);
 
   return (
-    <div style={boardStyles.wrapper}>
-      <table style={boardStyles.table} data-testid="board">
-        <tbody>
-          {grid.map((row, x) => (
-            <tr key={`x-${x}`}>
+    <div className="min-w-96">
+      <ul data-testid="board" className="mx-auto w-min">
+        {grid.map((row, x) => (
+          <li key={`x-${x}`} id={`x-${x}`}>
+            <ul className="flex">
               {row.map((block, y) => (
-                <td
-                  id={`x-${x}-y-${y}`}
-                  key={`x-${x}-y-${y}`}
-                  style={{
-                    ...boardStyles.cell,
-                    backgroundColor: block.isFlagged ? '#fffae6' : '#f0f0f0',
-                    cursor: 'pointer',
-                  }}
-                >
+                <li id={`x-${x}-y-${y}`} key={`x-${x}-y-${y}`}>
                   <Mine block={block} click={click} rightClick={rightClick} />
-                </td>
+                </li>
               ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+            </ul>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -49,13 +40,63 @@ interface MineProps {
 }
 
 function Mine({ block, click, rightClick }: MineProps) {
+  // --- Tailwind Styles ---
+
+  // Base button styles for size and content centering
+  const baseStyle =
+    'w-8 h-8 text-lg font-bold flex items-center justify-center cursor-pointer select-none transition-all duration-100 ease-in-out';
+
+  const unrevealedStyle = `
+    bg-gray-300 text-gray-900 border-gray-900 
+    border-2 
+    shadow-[4px_4px_0px_#1f2937] // Base PaperCSS shadow
+    hover:bg-gray-400 
+    hover:shadow-[5px_5px_0px_#1f2937] // Slight lift on hover
+    active:shadow-[1px_1px_0px_#1f2937] // Simulates press down
+    active:translate-x-1 active:translate-y-1
+  `;
+
+  const revealedStyle = `
+    bg-white text-gray-900 
+    border-1 border-gray-400 
+    shadow-inner shadow-gray-300 // Flat look with inner shadow
+    cursor-default 
+  `;
+
+  const contentStyle =
+    {
+      '1': 'text-blue-600',
+      '2': 'text-green-600',
+      '3': 'text-red-600',
+      '4': 'text-indigo-600',
+      '5': 'text-yellow-700',
+      '6': 'text-cyan-600',
+      '7': 'text-black',
+      '8': 'text-gray-800',
+      // Apply red for the actual mine content ('*')
+      '*': 'text-red-700',
+      // Default color for empty or flag display
+      '': 'text-gray-900',
+    }[block.display] || 'text-gray-900';
+
+  // --- Rendering ---
+
+  const currentStyle = block.isRevealed ? revealedStyle : unrevealedStyle;
+
   return (
     <button
-      onClick={() => click(block)}
+      className={`${baseStyle} ${currentStyle} ${contentStyle}`}
+      onClick={() => {
+        if (!block.isRevealed) {
+          click(block);
+        }
+      }}
       onContextMenu={(e) => {
         e.preventDefault();
         rightClick(block);
       }}
+      // Disable the button entirely if it is revealed
+      disabled={block.isRevealed}
     >
       {block.display}
     </button>
