@@ -1,5 +1,11 @@
 @import 'tailwindcss';
 
+@font-face {
+  font-family: 'Indie Flower';
+  display: swap;
+  src: url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
+}
+
 body {
-  @apply font-sans text-gray-900 bg-gray-50;
+  font-family: 'Indie Flower';
 }
