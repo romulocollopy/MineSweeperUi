@@ -19,23 +19,19 @@ export function MineSweeperBoard({ board, click, rightClick }: MineSweeperProps)
     <div style={boardStyles.wrapper}>
       <table style={boardStyles.table} data-testid="board">
         <tbody>
-          {grid.map((row, r) => (
-            <tr key={r}>
-              {row.map((block, c) => (
+          {grid.map((row, x) => (
+            <tr key={x}>
+              {row.map((block, y) => (
                 <td
-                  key={`${r}${c}`}
+                  id={`${x}-${y}`}
+                  key={`${x}-${y}`}
                   style={{
                     ...boardStyles.cell,
                     backgroundColor: block.isFlagged ? '#fffae6' : '#f0f0f0',
                     cursor: 'pointer',
                   }}
-                  onClick={() => click(block)}
-                  onContextMenu={(e) => {
-                    e.preventDefault();
-                    rightClick(block);
-                  }}
                 >
-                  {block.display}
+                  <Mine block={block} click={click} rightClick={rightClick} />
                 </td>
               ))}
             </tr>
@@ -43,6 +39,26 @@ export function MineSweeperBoard({ board, click, rightClick }: MineSweeperProps)
         </tbody>
       </table>
     </div>
+  );
+}
+
+interface MineProps {
+  block: MineBlock;
+  click: (block: MineBlock) => void;
+  rightClick: (block: MineBlock) => void;
+}
+
+function Mine({ block, click, rightClick }: MineProps) {
+  return (
+    <button
+      onClick={() => click(block)}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        rightClick(block);
+      }}
+    >
+      {block.display}
+    </button>
   );
 }
 
