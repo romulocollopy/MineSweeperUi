@@ -35,6 +35,10 @@ export class MineBlock {
   get isRevealed() {
     return this.display !== '';
   }
+
+  get clickDisable() {
+    return this.display === '-';
+  }
 }
 
 export class Board {

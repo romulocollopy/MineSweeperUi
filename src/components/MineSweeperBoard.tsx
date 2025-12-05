@@ -96,7 +96,7 @@ function Mine({ block, click, rightClick }: MineProps) {
         rightClick(block);
       }}
       // Disable the button entirely if it is revealed
-      disabled={block.isRevealed}
+      disabled={block.clickDisable}
     >
       {block.display}
     </button>
