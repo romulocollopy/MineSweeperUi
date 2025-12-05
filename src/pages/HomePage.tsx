@@ -1,4 +1,5 @@
 import { generateSlug } from 'random-word-slugs';
+import { Link } from 'react-router-dom';
 
 export default function HomePage() {
   return (
@@ -6,7 +7,7 @@ export default function HomePage() {
       <h1>Welcome to Mine Sweeper</h1>
 
       <p>
-        <a href={`/${generateSlug()}/`}>new game</a>
+        <Link to={`/${generateSlug()}/`}>new game</Link>
       </p>
     </>
   );

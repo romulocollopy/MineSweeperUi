@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { RequestParameters, Variables } from 'relay-runtime';
 import { Environment, Network, RecordSource, Store } from 'relay-runtime';
-import { getCookie, setCookie } from 'typescript-cookie';
+import { getCookie } from 'typescript-cookie';
 
 const API_URL = import.meta.env.VITE_GRAPHQL_URL || 'https://api-minesweeper.paraplu.app/';
 
@@ -41,8 +41,7 @@ async function ensureCSRFToken(): Promise<string | null> {
   if (!token) {
     try {
       // Make a HEAD request to Django to set the CSRF cookie
-      const resp = await axios.get(`${API_URL}csrf_token/`, {});
-      setCookie(csrfCookieName, resp.data.csrf_token);
+      await axios.get(`${API_URL}csrf_token/`, {});
     } catch (error) {
       console.warn('Failed to ensure CSRF token:', error);
       // Continue without CSRF token

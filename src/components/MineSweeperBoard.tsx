@@ -20,11 +20,11 @@ export function MineSweeperBoard({ board, click, rightClick }: MineSweeperProps)
       <table style={boardStyles.table} data-testid="board">
         <tbody>
           {grid.map((row, x) => (
-            <tr key={x}>
+            <tr key={`x-${x}`}>
               {row.map((block, y) => (
                 <td
-                  id={`${x}-${y}`}
-                  key={`${x}-${y}`}
+                  id={`x-${x}-y-${y}`}
+                  key={`x-${x}-y-${y}`}
                   style={{
                     ...boardStyles.cell,
                     backgroundColor: block.isFlagged ? '#fffae6' : '#f0f0f0',
