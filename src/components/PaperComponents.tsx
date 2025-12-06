@@ -17,7 +17,7 @@ interface PageContainerProps {
 export function PaperPage({ children, className = '' }: PageContainerProps) {
   return (
     <div className={`min-h-screen bg-gray-50 ${className}`}>
-      <div className="w-full max-w-sm sm:max-w-2xl lg:max-w-xl mx-auto px-2 sm:px-6 lg:px-8 py-8">
+      <div className="w-full md:max-w-2xl mx-auto px-2 sm:px-6 lg:px-8 py-8">
         <div className={`bg-white p-6 ${paperBaseStyle}`}>{children}</div>
       </div>
     </div>

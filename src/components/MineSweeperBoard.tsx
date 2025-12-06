@@ -44,12 +44,12 @@ function Mine({ block, click, rightClick }: MineProps) {
 
   // Base button styles for size and content centering
   const baseStyle =
-    'w-5 sm:w-8 h-5 sm:h-8 p-2 text-xm sm:text-lg font-bold flex items-center justify-center' +
-    'cursor-pointer select-none transition-all duration-50 ease-in-out';
+    'w-5 sm:w-8 h-5 sm:h-8 text-sm sm:text-lg font-bold flex items-center justify-center' +
+    'cursor-pointer select-none transition-all duration-50 ease-in-out block';
 
   const unrevealedStyle = `
     bg-gray-300 text-gray-900 border-gray-900 
-    sm:border-2 border-1
+    sm:border-2 border-1 
     shadow-[4px_4px_0px_#1f2937] // Base PaperCSS shadow
     hover:bg-gray-400 
     hover:shadow-[5px_5px_0px_#1f2937] // Slight lift on hover
@@ -58,27 +58,25 @@ function Mine({ block, click, rightClick }: MineProps) {
   `;
 
   const revealedStyle = `
-    bg-white text-gray-900 
+    bg-white text-gray-900 text-center
     border-1 border-gray-400 
-    shadow-inner shadow-gray-300 // Flat look with inner shadow
+    shadow-inner shadow-gray-300
     cursor-default 
   `;
 
-  const contentStyle =
-    {
-      '1': 'text-blue-600',
-      '2': 'text-green-600',
-      '3': 'text-red-600',
-      '4': 'text-indigo-600',
-      '5': 'text-yellow-700',
-      '6': 'text-cyan-600',
-      '7': 'text-black',
-      '8': 'text-gray-800',
-      // Apply red for the actual mine content ('*')
-      '*': 'text-red-700',
-      // Default color for empty or flag display
-      '': 'text-gray-900',
-    }[block.display] || 'text-gray-900';
+  let contentStyle = {
+    '1': 'text-blue-600',
+    '2': 'text-green-600',
+    '3': 'text-red-600',
+    '4': 'text-indigo-600',
+    '5': 'text-yellow-700',
+    '6': 'text-cyan-600',
+    '7': 'text-black',
+    '8': 'text-gray-800',
+    '-': 'text-gray-900',
+  }[block.display];
+
+  contentStyle = contentStyle ? contentStyle + ' p-2' : 'text-gray-900 xs-p0';
 
   // --- Rendering ---
 
