@@ -1,8 +1,8 @@
-import { render, waitFor } from '../test/utils';
 import { describe, expect, test, vi } from 'vitest';
-import { MineSweeperBoard } from './MineSweeperBoard';
 import { Board } from '../domain';
 import { generateBoard } from '../domain.test';
+import { render, waitFor } from '../test/utils';
+import { MineSweeperBoard } from './MineSweeperBoard';
 
 describe('<MineSweeperBoard>', () => {
   const [width, height] = [6, 5];
@@ -22,7 +22,19 @@ describe('<MineSweeperBoard>', () => {
     console.log(screen.debug());
 
     expect(screen.getByTestId('board')).toBeInTheDocument();
-    expect(screen.getByTestId('board')).toBeInTheDocument();
-    expect(screen.getAllByRole('button', { pressed: false })).toBeInTheDocument();
+
+    expect(screen.getAllByRole('button').length).to.equal(30);
+
+    for (const mine of screen.getAllByRole('button', { pressed: true })) {
+      expect(mine).toBeInTheDocument();
+      mine.click();
+      expect(click).to.not.toBeCalled();
+    }
+
+    for (const mine of screen.getAllByRole('button', { pressed: false })) {
+      expect(mine).toBeInTheDocument();
+      mine.click();
+      expect(click).to.toBeCalled();
+    }
   });
 });

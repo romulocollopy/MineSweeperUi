@@ -40,29 +40,20 @@ interface MineProps {
 }
 
 function Mine({ block, click, rightClick }: MineProps) {
-  // --- Tailwind Styles ---
-
-  // Base button styles for size and content centering
   const baseStyle =
-    'w-5 sm:w-8 h-5 sm:h-8 text-sm sm:text-lg font-bold flex items-center justify-center' +
+    'w-5 sm:w-8 h-5 sm:h-8 text-sm sm:text-lg font-bold flex items-center justify-center ' +
     'cursor-pointer select-none transition-all duration-50 ease-in-out block';
 
-  const unrevealedStyle = `
-    bg-gray-300 text-gray-900 border-gray-900 
-    sm:border-2 border-1 
-    shadow-[4px_4px_0px_#1f2937] // Base PaperCSS shadow
-    hover:bg-gray-400 
-    hover:shadow-[5px_5px_0px_#1f2937] // Slight lift on hover
-    active:shadow-[1px_1px_0px_#1f2937] // Simulates press down
-    active:translate-x-1 active:translate-y-1
-  `;
+  const unrevealedStyle =
+    'bg-gray-300 text-gray-900 border-gray-900 ' +
+    'sm:border-2 border-1 shadow-[4px_4px_0px_#1f2937] ' +
+    'hover:bg-gray-400 hover:shadow-[5px_5px_0px_#1f2937] ' +
+    'active:shadow-[1px_1px_0px_#1f2937] active:translate-x-1 active:translate-y-1';
 
-  const revealedStyle = `
-    bg-white text-gray-900 text-center
-    border-1 border-gray-400 
-    shadow-inner shadow-gray-300
-    cursor-default 
-  `;
+  const revealedStyle =
+    'bg-white text-gray-900 text-center ' +
+    'border-1 border-gray-400 ' +
+    'shadow-inner shadow-gray-300 cursor-default';
 
   let contentStyle = {
     '1': 'text-blue-600',
@@ -77,8 +68,6 @@ function Mine({ block, click, rightClick }: MineProps) {
   }[block.display];
 
   contentStyle = contentStyle ? contentStyle + ' p-2' : 'text-gray-900 xs-p0';
-
-  // --- Rendering ---
 
   const currentStyle = block.isRevealed ? revealedStyle : unrevealedStyle;
 
@@ -96,6 +85,7 @@ function Mine({ block, click, rightClick }: MineProps) {
       }}
       // Disable the button entirely if it is revealed
       disabled={block.clickDisable}
+      aria-pressed={block.isRevealed}
     >
       {block.display}
     </button>
