@@ -15,8 +15,8 @@ export function MineSweeperBoard({ board, click, rightClick }: MineSweeperProps)
   }, [board]);
 
   return (
-    <div className="min-w-96">
-      <ul data-testid="board" className="mx-auto w-min">
+    <div className="sm:min-w-96">
+      <ul data-testid="board" className="mx-auto w-min m--2 sm:m-0">
         {grid.map((row, x) => (
           <li key={`x-${x}`} id={`x-${x}`}>
             <ul className="flex">
@@ -44,11 +44,12 @@ function Mine({ block, click, rightClick }: MineProps) {
 
   // Base button styles for size and content centering
   const baseStyle =
-    'w-8 h-8 text-lg font-bold flex items-center justify-center cursor-pointer select-none transition-all duration-100 ease-in-out';
+    'w-5 sm:w-8 h-5 sm:h-8 p-2 text-xm sm:text-lg font-bold flex items-center justify-center' +
+    'cursor-pointer select-none transition-all duration-50 ease-in-out';
 
   const unrevealedStyle = `
     bg-gray-300 text-gray-900 border-gray-900 
-    border-2 
+    sm:border-2 border-1
     shadow-[4px_4px_0px_#1f2937] // Base PaperCSS shadow
     hover:bg-gray-400 
     hover:shadow-[5px_5px_0px_#1f2937] // Slight lift on hover

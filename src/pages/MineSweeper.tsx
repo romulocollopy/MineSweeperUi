@@ -1,32 +1,11 @@
-import { generateSlug } from 'random-word-slugs';
 import { useEffect, useState } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { MineSweeperBoard } from '../components/MineSweeperBoard';
+import { DigitalDisplay } from '../components/DigitalDisplay';
 import { Board, MineBlock } from '../domain';
 import { useMineSweeperQuery, useUpdateBoard } from '../hooks/MineSweeper';
 import { PaperH1Title, PaperLink, PaperSubtitle, PaperPage } from '../components/PaperComponents';
 import { ResultModal } from '../components/ResultModal';
-
-interface DigitalDisplayProps {
-  value: number;
-  label: string;
-}
-
-const DigitalDisplay: React.FC<DigitalDisplayProps> = ({ value, label }) => {
-  const formattedValue = String(value).padStart(3, '0'); // Ensures 3 digits (e.g., 007)
-
-  const displayClasses = `
-    border-4 border-gray-900 bg-gray-900 text-lime-400 font-mono 
-    text-3xl px-3 py-1 shadow-[2px_2px_0px_#6b7280] rounded-sm
-  `;
-
-  return (
-    <div className="flex flex-col items-center">
-      <div className={displayClasses}>{formattedValue}</div>
-      <span className="text-xs font-semibold uppercase mt-1">{label}</span>
-    </div>
-  );
-};
 
 export default function MineSweeper() {
   const { gameSlug } = useParams();
@@ -89,16 +68,13 @@ export default function MineSweeper() {
 
   return (
     <PaperPage className="flex flex-col items-center">
-      <div className="max-w-max">
-        <Link to="/" className="float-right text-blue-500">
-          home
-        </Link>
+      <div className="max-w-max mx-auto">
         <PaperH1Title>Mine Sweeper</PaperH1Title>
         <PaperSubtitle>Game: {slug}</PaperSubtitle>
         <div className="mb-8 flex justify-between items-center px-4 py-3 border-4 border-gray-900 bg-gray-200 shadow-[6px_6px_0px_#1f2937] rounded-lg">
           <DigitalDisplay value={board.flags} label="Mines Left" />
 
-          <PaperLink to={`/${generateSlug()}/`} variant="secondary" className="text-base py-1 px-3">
+          <PaperLink to={`/`} variant="secondary" className="text-base py-1 px-3">
             New Game
           </PaperLink>
 

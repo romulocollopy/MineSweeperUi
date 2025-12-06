@@ -17,7 +17,7 @@ interface PageContainerProps {
 export function PaperPage({ children, className = '' }: PageContainerProps) {
   return (
     <div className={`min-h-screen bg-gray-50 ${className}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full max-w-sm sm:max-w-2xl lg:max-w-xl mx-auto px-2 sm:px-6 lg:px-8 py-8">
         <div className={`bg-white p-6 ${paperBaseStyle}`}>{children}</div>
       </div>
     </div>
@@ -74,7 +74,7 @@ export const PaperButton: React.FC<PaperButtonProps> = ({
 
 export const PaperInput: React.FC<PaperInputProps> = ({ className = '', ...props }) => {
   const baseClasses = `
-    w-full p-3 text-lg 
+    w-full p1 sm:p-3 text-sm sm:text-lg 
     ${paperBaseStyle} rounded-md
     focus:shadow-none focus:outline-none focus:ring-4 focus:ring-blue-500/50 
     focus:translate-x-1 focus:translate-y-1
@@ -99,7 +99,6 @@ export const PaperLink: React.FC<PaperLinkProps> = ({
 
   switch (variant) {
     case 'primary':
-      // FIX: Ensure bg-blue-500 is applied to override bg-white from paperBaseStyle
       colorStyles = 'bg-blue-500 text-white hover:bg-blue-600';
       break;
     case 'secondary':
@@ -115,7 +114,7 @@ export const PaperLink: React.FC<PaperLinkProps> = ({
 
   const baseClasses = `
     inline-flex items-center justify-center 
-    px-6 py-2 text-lg font-bold uppercase cursor-pointer 
+    px-1 md:px-6 sm:px-4 py-1 sm:py-2 md:text-lg font-bold uppercase cursor-pointer 
     ${paperBaseStyle} ${hoverLiftStyle} ${activePressStyle} 
     rounded-md ${colorStyles} ${className}
     no-underline focus:outline-none focus:ring-4 focus:ring-blue-500/50

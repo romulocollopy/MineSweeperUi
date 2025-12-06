@@ -1,4 +1,3 @@
-import { generateSlug } from 'random-word-slugs';
 import { PaperLink, PaperSubtitle, paperBaseStyle } from './PaperComponents';
 
 export function ResultModal({ result, onClose }: { result: 'win' | 'lose'; onClose: () => void }) {
@@ -17,7 +16,7 @@ export function ResultModal({ result, onClose }: { result: 'win' | 'lose'; onClo
     >
       <div
         className={`relative p-8 text-center w-[340px] ${paperBaseStyle} rounded-lg bg-white`}
-        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+        onClick={(e) => e.stopPropagation()}
       >
         <button className={closeButtonClasses} onClick={onClose} aria-label="Close Modal">
           ×
@@ -26,12 +25,7 @@ export function ResultModal({ result, onClose }: { result: 'win' | 'lose'; onClo
         <PaperSubtitle>{message}</PaperSubtitle>
 
         <div className="flex justify-center mt-6">
-          <PaperLink
-            to={`/${generateSlug()}/`}
-            variant="primary"
-            onClick={onClose}
-            className="w-full justify-center"
-          >
+          <PaperLink to={`/`} variant="primary" onClick={onClose} className="w-full justify-center">
             ➕ Start New Game
           </PaperLink>
         </div>
