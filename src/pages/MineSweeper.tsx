@@ -10,7 +10,7 @@ import { ResultModal } from '../components/ResultModal';
 export default function MineSweeper() {
   const { gameSlug } = useParams();
   const slug = gameSlug || 'Our Game';
-  const [params, _] = useSearchParams();
+  const [params, setQueryParams] = useSearchParams();
   const difficulty = params.get('difficulty') ?? 'medium';
 
   const [board, setBoard] = useState<Board>(new Board({ blocks: [], slug: '', flags: 0 }));
@@ -29,29 +29,29 @@ export default function MineSweeper() {
     setGameOver(game.gameOver);
     setWon(game.won);
     setShowModal(game.gameOver || game.won);
-    if (game.timeElapsed === 0) {
-      setStartTime(Date.now());
-    }
-  }, [game]);
+    setQueryParams('');
+    setStartTime(getStartTime(game.timeElapsed).getTime());
+    setTimeElapsed(game.timeElapsed);
+  }, [game, setQueryParams]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
-    const isGameActive = !gameOver && !won && board.blocks.length > 0;
+    const isGameActive = !gameOver && !won;
 
     if (isGameActive) {
       interval = setInterval(() => {
         const currentTime = Math.floor((Date.now() - startTime) / 1000);
         setTimeElapsed(currentTime);
       }, 1000);
-    } else if (gameOver || won) {
+    } else {
       setTimeElapsed(timeElapsed); // Keep the last recorded time
     }
 
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [gameOver, won, board.blocks.length, startTime, timeElapsed]);
+  }, [gameOver, won, startTime, timeElapsed]);
 
   const handleAction = (action: 'dig' | 'flag') => (block: MineBlock) => {
     if (gameOver) return;
@@ -91,4 +91,9 @@ export default function MineSweeper() {
       )}
     </PaperPage>
   );
+}
+function getStartTime(secondsSinceStart: number) {
+  const now = Date.now(); // current time in milliseconds
+  const startTimeMs = now - secondsSinceStart * 1000;
+  return new Date(startTimeMs);
 }
