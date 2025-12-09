@@ -15,7 +15,7 @@ export function MineSweeperBoard({ board, click, rightClick }: MineSweeperProps)
   }, [board]);
 
   return (
-    <div className="sm:min-w-96">
+    <div className="sm:min-w-96 mx-auto">
       <ul data-testid="board" className="mx-auto w-min m--2 sm:m-0">
         {grid.map((row, x) => (
           <li key={`x-${x}`} id={`x-${x}`}>

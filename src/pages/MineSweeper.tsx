@@ -92,6 +92,7 @@ export default function MineSweeper() {
     </PaperPage>
   );
 }
+
 function getStartTime(secondsSinceStart: number) {
   const now = Date.now(); // current time in milliseconds
   const startTimeMs = now - secondsSinceStart * 1000;
